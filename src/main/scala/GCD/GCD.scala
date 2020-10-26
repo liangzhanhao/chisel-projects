@@ -20,7 +20,7 @@ package circuits
 import chisel3._
 import chisel3.util._
 
-class GCD(val dwidth: Int = 16) extends Module {
+class GCD(val dwidth: Int = 16) extends Module with AsyncResetTrait {
   val io = IO(new Bundle {
     val value1      = Input(UInt(dwidth.W))
     val value2      = Input(UInt(dwidth.W))
@@ -29,9 +29,8 @@ class GCD(val dwidth: Int = 16) extends Module {
     val outputValid = Output(Bool())
   })
 
-  //TODO replace posedge async reset signals with negedge ones
-  val x = withReset(reset.asAsyncReset) { RegInit(0.U(dwidth.W)) }
-  val y = withReset(reset.asAsyncReset) { RegInit(0.U(dwidth.W)) }
+  val x = AsyncResetRegInit(0.U(dwidth.W))
+  val y = AsyncResetRegInit(0.U(dwidth.W))
 
   //load values
   x := Mux(io.inputValid, io.value1, Mux(x > y, x - y, x))

@@ -2,16 +2,23 @@ PROJECT ?=
 PROJECT_CIRCUIT_NAME := $(PROJECT)
 PROJECT_CIRCUIT_PATH := src/main/scala/$(PROJECT)
 PROJECT_CIRCUIT_FILE := $(PROJECT_CIRCUIT_PATH)/$(PROJECT_CIRCUIT_NAME).scala
+
 PROJECT_TESTBENCH_NAME := $(PROJECT)Tests
 PROJECT_TESTBENCH_PATH := src/test/scala/$(PROJECT)
 PROJECT_TESTBENCH_FILE := $(PROJECT_TESTBENCH_PATH)/$(PROJECT_TESTBENCH_NAME).scala
+
+VERILOG_LAUNCHER_FILE := src/test/scala/utils/VerilogLauncher.scala
+VERILOG_MAPPING := \"$(PROJECT_CIRCUIT_NAME)\" -> { (args: Array[String]) => (new chisel3.stage.ChiselStage).execute(args, Seq(ChiselGeneratorAnnotation(() => new $(PROJECT_CIRCUIT_NAME)))) }
+VERILOG_MAPPING_EXIST := $(shell grep \"$(PROJECT_CIRCUIT_NAME)\" $(VERILOG_LAUNCHER_FILE) > /dev/null && echo "Y" || echo "N")
+
 TEST_LAUNCHER_FILE := src/test/scala/utils/TestLauncher.scala
 TEST_MAPPING := \"$(PROJECT_CIRCUIT_NAME)\" -> { (manager: TesterOptionsManager) => Driver.execute(() => new $(PROJECT_CIRCUIT_NAME), manager){(c) => new $(PROJECT_TESTBENCH_NAME)(c)} }
 TEST_MAPPING_EXIST := $(shell grep \"$(PROJECT_CIRCUIT_NAME)\" $(TEST_LAUNCHER_FILE) > /dev/null && echo "Y" || echo "N")
+
 REPL_LAUNCHER_FILE := src/test/scala/utils/ReplLauncher.scala
 REPL_MAPPING := \"$(PROJECT_CIRCUIT_NAME)\" -> { (manager: ReplOptionsManager) => Driver.executeFirrtlRepl(() => new $(PROJECT_CIRCUIT_NAME), manager) }
 REPL_MAPPING_EXIST := $(shell grep \"$(PROJECT_CIRCUIT_NAME)\" $(REPL_LAUNCHER_FILE) > /dev/null && echo "Y" || echo "N")
-SBT ?= sbt -J-Xmx2G -J-Xss32M 
+SBT ?= sbt -J-Xmx2G -J-Xss32M
 
 help:
 	@echo "to create a new project:          make create PROJECT=..."
@@ -21,8 +28,9 @@ help:
 	@echo "to generate vcd waveform:         make vcd PROJECT=..."
 	@echo "just to generate verilog file:    make verilog PROJECT=..."
 	@echo "to test using verilator:          make verilator PROJECT=..."
+	@echo "to test using treadle:            make treadle PROJECT=..."
 	@echo "to clean generated files:         make clean PROJECT=..."
-	@echo "to clean all generated files:     make clean-all PROJECT=..."
+	@echo "to clean all generated files:     make clean-all"
 
 create: create_circuit create_testbench create_launcher
 
@@ -80,6 +88,9 @@ endif
 ifeq ($(REPL_MAPPING_EXIST), N)
 	@sed -i -e "/->/s/}$$/},\nINSERTHERE/" -e "s/INSERTHERE/    $(REPL_MAPPING)/" $(REPL_LAUNCHER_FILE)
 endif
+ifeq ($(VERILOG_MAPPING_EXIST), N)
+	@sed -i -e "/->/s/}$$/},\nINSERTHERE/" -e "s/INSERTHERE/    $(VERILOG_MAPPING)/" $(VERILOG_LAUNCHER_FILE)
+endif
 endif
 
 
@@ -95,10 +106,13 @@ vcd: clean
 	$(SBT) 'test:runMain circuits.TestLauncher $(PROJECT) --generate-vcd-output on'
 
 verilog: clean
-	$(SBT) 'test:runMain circuits.TestLauncher $(PROJECT) --generate-vcd-output off'
+	$(SBT) 'test:runMain circuits.VerilogLauncher $(PROJECT)'
 
 verilator: clean
 	$(SBT) 'test:runMain circuits.TestLauncher $(PROJECT) --backend-name verilator'
+
+treadle: clean
+	$(SBT) 'test:runMain circuits.TestLauncher $(PROJECT) --backend-name treadle'
 
 clean:
 	@test $(PROJECT) && rm -rf test_run_dir/$(PROJECT) || echo "nothing to clean"
@@ -106,5 +120,5 @@ clean:
 clean-all:
 	rm -rf test_run_dir
 
-.PHONY: help test detail vcd verilog verilator clean clean-all
+.PHONY: help test detail vcd verilog verilator treadle clean clean-all
 .PHONY: create create_circuit create_testbench create_launcher

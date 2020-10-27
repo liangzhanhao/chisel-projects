@@ -118,7 +118,7 @@ clean:
 	@test $(PROJECT) && rm -rf test_run_dir/$(PROJECT) || echo "nothing to clean"
 
 clean-all:
-	rm -rf test_run_dir
+	rm -rf test_run_dir target project/project project/target
 
 .PHONY: help test detail vcd verilog verilator treadle clean clean-all
 .PHONY: create create_circuit create_testbench create_launcher

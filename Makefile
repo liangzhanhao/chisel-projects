@@ -29,6 +29,7 @@ help:
 	@echo "just to generate verilog file:    make verilog PROJECT=..."
 	@echo "to test using verilator:          make verilator PROJECT=..."
 	@echo "to test using treadle:            make treadle PROJECT=..."
+	@echo "to test using vcs:                make vcs PROJECT=..."
 	@echo "to clean generated files:         make clean PROJECT=..."
 	@echo "to clean all generated files:     make clean-all"
 
@@ -113,6 +114,9 @@ verilator: clean
 
 treadle: clean
 	$(SBT) 'test:runMain circuits.TestLauncher $(PROJECT) --backend-name treadle'
+
+vcs: clean
+	$(SBT) 'test:runMain circuits.TestLauncher $(PROJECT) --backend-name vcs'
 
 clean:
 	@test $(PROJECT) && rm -rf test_run_dir/$(PROJECT) || echo "nothing to clean"

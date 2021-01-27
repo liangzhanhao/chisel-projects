@@ -13,4 +13,9 @@ trait AsyncResetTrait extends Module {
     val x = withReset(reset.asAsyncReset) { RegNext(next, init) }
     x
   }
+
+  def AsyncResetRegEnable[T <: Data](next: T, init: T, enable: Bool): T = {
+    val x = withReset(reset.asAsyncReset) { RegEnable(next, init, enable) }
+    x
+  }
 }

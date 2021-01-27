@@ -116,13 +116,13 @@ treadle: clean
 	$(SBT) 'test:runMain circuits.TestLauncher $(PROJECT) --backend-name treadle'
 
 vcs: clean
-	$(SBT) 'test:runMain circuits.TestLauncher $(PROJECT) --backend-name vcs'
+	$(SBT) 'test:runMain circuits.TestLauncher $(PROJECT) --backend-name vcs --generate-fsdb-output on'
 
 clean:
 	@test $(PROJECT) && rm -rf test_run_dir/$(PROJECT) || echo "nothing to clean"
 
 clean-all:
-	rm -rf test_run_dir target project/project project/target
+	rm -rf test_run_dir target project/project project/target ucli.key verdiLog novas* vcdplus.vpd
 
 .PHONY: help test detail vcd verilog verilator treadle clean clean-all
 .PHONY: create create_circuit create_testbench create_launcher

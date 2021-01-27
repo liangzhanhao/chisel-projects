@@ -42,7 +42,9 @@ addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.fu
 // Provide a managed dependency on X if -DXVersion="" is supplied on the command line.
 val defaultVersions = Seq(
   "chisel3"          -> "3.4.+",
-  "chisel-iotesters" -> "1.5.0+",
+//  "chisel-iotesters" -> "1.5.0+",
+  "firrtl"           -> "1.4.1", //for async negedge reset, TODO: use other version name to distinguish from official's one
+  "chisel-iotesters" -> "1.5.1-negedge-async-reset", //for async negedge reset
   "chiseltest"       -> "0.2.1+"
   )
 

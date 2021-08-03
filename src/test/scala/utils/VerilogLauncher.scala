@@ -8,7 +8,9 @@ object VerilogLauncher {
     "MuxVectorModule" -> { (args: Array[String]) => (new chisel3.stage.ChiselStage).execute(args, Seq(ChiselGeneratorAnnotation(() => new MuxVectorModule))) },
     "ALU_dwidth4" -> { (args: Array[String]) => (new chisel3.stage.ChiselStage).execute(args, Seq(ChiselGeneratorAnnotation(() => new ALU(4)))) },
     "ALU_dwidth8" -> { (args: Array[String]) => (new chisel3.stage.ChiselStage).execute(args, Seq(ChiselGeneratorAnnotation(() => new ALU(8)))) },
-    "GCD" -> { (args: Array[String]) => (new chisel3.stage.ChiselStage).execute(args, Seq(ChiselGeneratorAnnotation(() => new GCD))) }
+    "GCD" -> { (args: Array[String]) => (new chisel3.stage.ChiselStage).execute(args, Seq(ChiselGeneratorAnnotation(() => new GCD))) },
+    "ByteSelector" -> { (args: Array[String]) => (new chisel3.stage.ChiselStage).execute(args, Seq(ChiselGeneratorAnnotation(() => new ByteSelector))) },
+    "PrintingModule" -> { (args: Array[String]) => (new chisel3.stage.ChiselStage).execute(args, Seq(ChiselGeneratorAnnotation(() => new PrintingModule))) }
   )
 
   def main(args: Array[String]): Unit = {

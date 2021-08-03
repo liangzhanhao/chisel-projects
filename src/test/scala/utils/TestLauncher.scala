@@ -11,7 +11,9 @@ object TestLauncher {
     "ALU_dwidth4" -> { (manager: TesterOptionsManager) => Driver.execute(() => new ALU(4), manager){(c) => new ALUTests(c)} },
     //circuit ALU with dwidth=8
     "ALU_dwidth8" -> { (manager: TesterOptionsManager) => Driver.execute(() => new ALU(8), manager){(c) => new ALUTests(c)} },
-    "GCD" -> { (manager: TesterOptionsManager) => Driver.execute(() => new GCD, manager){(c) => new GCDTests(c)} }
+    "GCD" -> { (manager: TesterOptionsManager) => Driver.execute(() => new GCD, manager){(c) => new GCDTests(c)} },
+    "ByteSelector" -> { (manager: TesterOptionsManager) => Driver.execute(() => new ByteSelector, manager){(c) => new ByteSelectorTests(c)} },
+    "PrintingModule" -> { (manager: TesterOptionsManager) => Driver.execute(() => new PrintingModule, manager){(c) => new PrintingModuleTests(c)} }
   )
 
   def main(args: Array[String]): Unit = {

@@ -1,12 +1,15 @@
 package circuits
 
 import java.io._
+import scala.io.Source
+import scala.util.matching.Regex
+import scala.collection.mutable._
 
 object ProjectCreater {
   def main(args: Array[String]): Unit = {
     if(args.nonEmpty) {
       for(projectName <- args) {
-        //TODO: add an item in mapping for projects
+        //create circuit files
         val circuitFile = projectName ++ ".scala"
         val circuitPath = "src/main/scala/" ++ projectName ++ "/"
         val circuitFullPathFile = new File(circuitPath ++ circuitFile)
@@ -41,8 +44,9 @@ object ProjectCreater {
           println(circuitPath + circuitFile + " exist! Can not be created!")
         }
         
+        //create circuit testbenches
         val circuitTestBench = projectName ++ "Tests.scala"
-        val circuitTestPath = "src/test/scala/" ++ projectName ++ "/"
+        val circuitTestPath  = "src/test/scala/" ++ projectName ++ "/"
         val circuitFullPathTestBench = new File(circuitTestPath ++ circuitTestBench)
         if(!circuitFullPathTestBench.exists()) {
           (new File(circuitTestPath)).mkdir()
@@ -57,6 +61,33 @@ object ProjectCreater {
           tester.close()
         } else {
           println(circuitTestPath + circuitFile + " exist! Can not be created!")
+        }
+        
+        //create mapping for running projects
+        val verilogLaunchFile  = "src/test/scala/utils/VerilogLauncher.scala"
+        val testLaunchFile     = "src/test/scala/utils/TestLauncher.scala"
+        val replLaunchFile     = "src/test/scala/utils/ReplLauncher.scala"
+        val launchFilesArray   = Array(verilogLaunchFile, testLaunchFile, replLaunchFile)
+        val verilogMapping     = "    " + '"' + projectName + '"' + " -> { (args: Array[String]) => (new chisel3.stage.ChiselStage).execute(args, Seq(ChiselGeneratorAnnotation(() => new " + projectName + "))) }"
+        val testMapping        = "    " + '"' + projectName + '"' + " -> { (manager: TesterOptionsManager) => Driver.execute(() => new " + projectName + ", manager){(c) => new " + projectName + "Tests(c)} }"
+        val replMapping        = "    " + '"' + projectName + '"' + " -> { (manager: ReplOptionsManager) => Driver.executeFirrtlRepl(() => new " + projectName + ", manager) }"
+        val mappingArray       = Array(verilogMapping, testMapping, replMapping)
+        val lastMappingPattern = new Regex("->.*}$")
+        for(i <- (launchFilesArray zip mappingArray)) {
+          val launcherreader = Source.fromFile(i._1, "UTF-8")
+          val lineIterator   = launcherreader.getLines
+          val launcherBuffer: ArrayBuffer[String] = ArrayBuffer()
+          for(L <- lineIterator) {
+            val hasPattern = lastMappingPattern findFirstIn L
+            hasPattern match {
+              case Some(p) => launcherBuffer += (L + ","); launcherBuffer += (i._2)
+              case None => launcherBuffer += L
+            }
+          }
+          launcherreader.close()
+          val launcherwriter = new PrintWriter(new File(i._1))
+          launcherBuffer.map(launcherwriter.println(_))
+          launcherwriter.close()
         }
       }
     } else {

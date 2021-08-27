@@ -10,7 +10,8 @@ object VerilogLauncher {
     "ALU_dwidth8" -> { (args: Array[String]) => (new chisel3.stage.ChiselStage).execute(args, Seq(ChiselGeneratorAnnotation(() => new ALU(8)))) },
     "GCD" -> { (args: Array[String]) => (new chisel3.stage.ChiselStage).execute(args, Seq(ChiselGeneratorAnnotation(() => new GCD))) },
     "ByteSelector" -> { (args: Array[String]) => (new chisel3.stage.ChiselStage).execute(args, Seq(ChiselGeneratorAnnotation(() => new ByteSelector))) },
-    "PrintingModule" -> { (args: Array[String]) => (new chisel3.stage.ChiselStage).execute(args, Seq(ChiselGeneratorAnnotation(() => new PrintingModule))) }
+    "PrintingModule" -> { (args: Array[String]) => (new chisel3.stage.ChiselStage).execute(args, Seq(ChiselGeneratorAnnotation(() => new PrintingModule))) },
+    "FixedPriorityArbiter" -> { (args: Array[String]) => (new chisel3.stage.ChiselStage).execute(args, Seq(ChiselGeneratorAnnotation(() => new FixedPriorityArbiter(reqWidth=8, impl="feedback")))) }
   )
 
   def main(args: Array[String]): Unit = {

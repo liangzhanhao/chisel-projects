@@ -10,7 +10,8 @@ object ReplLauncher {
     "ALU_dwidth8" -> { (manager: ReplOptionsManager) => Driver.executeFirrtlRepl(() => new ALU(8), manager) },
     "GCD" -> { (manager: ReplOptionsManager) => Driver.executeFirrtlRepl(() => new GCD, manager) },
     "ByteSelector" -> { (manager: ReplOptionsManager) => Driver.executeFirrtlRepl(() => new ByteSelector, manager) },
-    "PrintingModule" -> { (manager: ReplOptionsManager) => Driver.executeFirrtlRepl(() => new PrintingModule, manager) }
+    "PrintingModule" -> { (manager: ReplOptionsManager) => Driver.executeFirrtlRepl(() => new PrintingModule, manager) },
+    "FixedPriorityArbiter" -> { (manager: ReplOptionsManager) => Driver.executeFirrtlRepl(() => new FixedPriorityArbiter(reqWidth=8, impl="recursion"), manager) }
   )
 
   def main(args: Array[String]): Unit = {

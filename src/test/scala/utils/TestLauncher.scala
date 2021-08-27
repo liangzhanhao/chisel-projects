@@ -13,7 +13,8 @@ object TestLauncher {
     "ALU_dwidth8" -> { (manager: TesterOptionsManager) => Driver.execute(() => new ALU(8), manager){(c) => new ALUTests(c)} },
     "GCD" -> { (manager: TesterOptionsManager) => Driver.execute(() => new GCD, manager){(c) => new GCDTests(c)} },
     "ByteSelector" -> { (manager: TesterOptionsManager) => Driver.execute(() => new ByteSelector, manager){(c) => new ByteSelectorTests(c)} },
-    "PrintingModule" -> { (manager: TesterOptionsManager) => Driver.execute(() => new PrintingModule, manager){(c) => new PrintingModuleTests(c)} }
+    "PrintingModule" -> { (manager: TesterOptionsManager) => Driver.execute(() => new PrintingModule, manager){(c) => new PrintingModuleTests(c)} },
+    "FixedPriorityArbiter" -> { (manager: TesterOptionsManager) => Driver.execute(() => new FixedPriorityArbiter(reqWidth=8, impl="recursion"), manager){(c) => new FixedPriorityArbiterTests(c)} }
   )
 
   def main(args: Array[String]): Unit = {
